@@ -14,20 +14,16 @@ import numpy as np
 #Setting the working directory
 os.chdir('M:\\Projects\\Record Linkage\\Python\\data\\')
 #importing the data
-dfA = pd.read_csv('for_linkage_northen_cape.csv', sep=',', encoding='utf-8', index_col='dummy_id')
-
-#a sample of the dataset
-dfA_section1 = dfA[0:366067]
-dfA_section2 = dfA[366067:]
+dfA = pd.read_csv('for_linkage_data1.csv', sep=',', encoding='utf-8', index_col='dummy_id')
 
 # Indexation step - Block Index
-indexer = rl.BlockIndex(on='surname' and 'date_of_birth') #you can apply and or suppose you want to block with two variables
-pairs = indexer.index(dfA_section2)
+indexer = rl.BlockIndex(on='surname' and 'gender' and 'date_of_birth') #you can apply and or suppose you want to block with two variables
+pairs = indexer.index(dfA)
 #Printing the number of pairs creating from the blocking step
 print(len(pairs))
 
 #Doing comparision
-compare_cl = rl.Compare(pairs, dfA_section2, dfA_section2)
+compare_cl = rl.Compare(pairs, dfA, dfA)
 compare_cl.string('firstname', 'firstname', method='jarowinkler', threshold=0.85, name='firstname')
 compare_cl.string('surname', 'surname', method='jarowinkler', threshold=0.85, name='surname')
 compare_cl.exact('initial', 'initial', name='initial')
@@ -41,7 +37,7 @@ compare_cl.exact('facility_code', 'facility_code', name='facility_code');
 data = compare_cl.vectors
 
 #saving the first pair
-data.to_csv('section2_northen_cape.csv', sep=',', encoding='utf-8')
+data.to_csv('data1_vectors.csv', sep=',', encoding='utf-8')
 
 #Comparing vectors
 compare_cl.vectors
@@ -55,7 +51,7 @@ matches = compare_cl.vectors[compare_cl.vectors.sum(axis=1) > 6]
 match_index = matches.index
 
 #creating a training dataset
-golden_pairs = data[0:5000]
+golden_pairs = data[0:2000000]
 golden_matches_index = golden_pairs.index & match_index
 
 # Train the classifier
