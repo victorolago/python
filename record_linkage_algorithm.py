@@ -33,25 +33,29 @@ compare_cl.exact('dob_month', 'dob_month', name='dob_month')
 compare_cl.exact('dob_year', 'dob_year', name='dob_year')
 compare_cl.exact('facility_code', 'facility_code', name='facility_code');
 
-#saving the vectors
-data = compare_cl.vectors
-
-#saving the first pair
-data.to_csv('data1_vectors.csv', sep=',', encoding='utf-8')
-
 #Comparing vectors
 compare_cl.vectors
 compare_cl.vectors.describe()
-
 # Sum the comparison results.
 compare_cl.vectors.sum(axis=1).value_counts().sort_index(ascending=False)
+
+#saving the vectors
+data = compare_cl.vectors
+#saving the vectors, so that I dont have to repeat the blocking and comparsion step
+data.to_csv('data_vectors.csv', sep=',', encoding='utf-8')
+
+#getting a sample of the dataframe
+data_sample = data.take(np.random.permutation(len(data))[:2000000])
+
 #tentetive matches
-matches = compare_cl.vectors[compare_cl.vectors.sum(axis=1) > 6]
+matches = dfA_sample[dfA_sample.sum(axis=1) > 6]
+#tentetive matches
+#nonmatches = data_sample[data_sample.sum(axis=1) < 4]
 #creating match index
 match_index = matches.index
 
 #creating a training dataset
-golden_pairs = data[0:2000000]
+golden_pairs = data_sample[0:2000000]
 golden_matches_index = golden_pairs.index & match_index
 
 # Train the classifier
@@ -69,3 +73,10 @@ conf_svm
 rl.fscore(conf_svm)
 
 m_last = pd.DataFrame(result_svm)
+
+#loading data for review
+dfB = pd.read_csv('for_linkage_data1.csv', sep=',',encoding='utf-8')
+
+#after review the dataframe m_last
+#to review the matches
+dfB.loc[['LID000000000','LID000157274','LID000217044','LID000491999','LID000558481','LID000589541']]
