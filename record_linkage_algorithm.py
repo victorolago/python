@@ -23,7 +23,7 @@ pairs = indexer.index(dfA)
 print(len(pairs))
 
 #Doing comparision
-compare_cl = rl.Compare(pairs, dfA, dfA)
+compare_cl = rl.Compare(pairs, dfA)
 compare_cl.string('firstname', 'firstname', method='jarowinkler', threshold=0.85, name='firstname')
 compare_cl.string('surname', 'surname', method='jarowinkler', threshold=0.85, name='surname')
 compare_cl.exact('initial', 'initial', name='initial')
